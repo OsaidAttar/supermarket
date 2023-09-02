@@ -1,6 +1,6 @@
 import connectDB from "../../DB/conncetion.js"
 import categoryRouter from './category/category.router.js'
-import authRouter from './auth/auth.router.js'
+import authRouter from './Auth/auth.router.js'
 import cartRouter from './cart/cart.router.js'
 import couponRouter from './coupon/coupon.router.js'
 import distributorsRouter from './distributors/distributors.router.js'
