@@ -6,6 +6,8 @@ import orderModel from "../../../../DB/models/Order.model.js";
 import cartModel from "../../../../DB/models/Cart.model.js";
 import createInvoice from "../../../Services/pdf.js";
 import { sendEmail } from "../../../Services/sendEmail.js";
+import userModel from "../../../../DB/models/User.model.js";
+
 
 
 export const createOrder =asyncHandler(async (req,res,next)=>{
@@ -82,14 +84,15 @@ $pull:{
             total:order.finalPrice,
             invoice_nr: order._id
         };
+        const user =await userModel.findById(req.user._id)
         
         createInvoice(invoice, "invoice.pdf");  
-            
-        // await sendEmail(req.user.email,'infinity light-invoice','welcome',{
+         
+        await sendEmail(user.email,'infinity light-invoice','welcome',{
            
-        //     path:'invoice.pdf',
-        //     contentType:'application/pdf'
-        // })    
+            path:'invoice.pdf',
+            contentType:'application/pdf'
+        })    
        
         return res.status(200).json({message:"success",order})
     })
