@@ -1,4 +1,4 @@
-import nodemailer from "nodemailer";
+import nodemailer from 'nodemailer';
 
 // async..await is not allowed in global scope, must use a wrapper
 export async function sendEmail(to,subject,html,attachment) {

@@ -6,7 +6,7 @@ import orderModel from "../../../../DB/models/Order.model.js";
 import cartModel from "../../../../DB/models/Cart.model.js";
 import createInvoice from "../../../Services/pdf.js";
 import { sendEmail } from "../../../Services/sendEmail.js";
-import { response } from "express";
+
 
 export const createOrder =asyncHandler(async (req,res,next)=>{
     const {products,address,phoneNumber,couponName,paymentType}=req.body
