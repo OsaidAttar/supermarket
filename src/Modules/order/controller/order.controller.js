@@ -85,11 +85,11 @@ $pull:{
         
         createInvoice(invoice, "invoice.pdf");  
             
-        await sendEmail(req.user.email,'infinity light-invoice','welcome',{
+        // await sendEmail(req.user.email,'infinity light-invoice','welcome',{
            
-            path:'invoice.pdf',
-            contentType:'application/pdf'
-        })    
+        //     path:'invoice.pdf',
+        //     contentType:'application/pdf'
+        // })    
        
         return res.status(200).json({message:"success",order})
     })
