@@ -84,11 +84,10 @@ $pull:{
             total:order.finalPrice,
             invoice_nr: order._id
         };
-        const user =await userModel.findById(req.user._id)
-        
+       
         createInvoice(invoice, "invoice.pdf");  
          
-        await sendEmail(user.email,'infinity light-invoice','welcome',{
+        await sendEmail(req.user.email,'infinity light-invoice','welcome',{
            
             path:'invoice.pdf',
             contentType:'application/pdf'
