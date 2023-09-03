@@ -22,7 +22,7 @@ const decoded =verifyToken(token,process.env.LOGIN_TOKEN)
 if(!decoded){
     return next(new Error('invalid token payload',{cause:400}))
 }
-const user=await userModel.findById(decoded.id).select('username role changePasswordTime')
+const user=await userModel.findById(decoded.id).select('userName email role changePasswordTime')
 if(!user){
     return next(new Error('not register user',{cause:403}))
 }
