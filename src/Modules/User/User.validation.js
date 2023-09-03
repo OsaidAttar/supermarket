@@ -1,7 +1,7 @@
 import joi from 'joi'
 import {generalFeilds} from '../../MiddelWare/validation.js'
 export const profile=joi.object({
-    file:generalFeilds.file.required()
+    file:generalFeilds.file
 }).required()
 export const updateProfile=joi.object({
     userId:generalFeilds.id,
