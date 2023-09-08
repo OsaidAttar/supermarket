@@ -12,3 +12,4 @@ router.delete('/deleteAdmin/:adminId',auth(endpoint.delete),superAdminController
 router.get('/getallAdmin',auth(endpoint.getAllAdmin),superAdminController.getAllAdmin)
 router.get('/getAdmin/:adminId',auth(endpoint.getAllAdmin),validation(validtors.getAdmin),superAdminController.getAdmin)
 router.patch('/updateStatusAdmin/:adminId',auth(endpoint.update),validation(validtors.updateStatusAdmin),superAdminController.updateStatusAdmin)
+export default router

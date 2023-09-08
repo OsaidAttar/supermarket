@@ -11,11 +11,13 @@ import stockmanagementRouter from './stockManagement/stockManagement.router.js'
 import subcategory from './subcategory/subcategory.router.js'
 import suppliersRouter from './Suppliers/Suppliers.router.js'
 import userRouter from './User/User.router.js'
+import superAdminRouter from './superAdmin/superAdmin.router.js'
 import {globalErrorHandler} from '../Services/errorHandling.js'
 const initApp=(app,express)=>{
     connectDB();
     app.use(express.json())
     app.use('/category',categoryRouter)
+    app.use('/superadmin',superAdminRouter)
     app.use('/auth',authRouter)
     app.use('/cart',cartRouter)
     app.use('/coupon',couponRouter)
