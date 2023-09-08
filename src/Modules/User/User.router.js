@@ -11,12 +11,7 @@ router.put('/profile/update/:userId',auth(endpoint.update),validation(validtors.
 router.delete('/profile/delete/:userId',auth(endpoint.delete),fileUpload(fileValidation.image).single('image'),userController.deleteUserProfile)
 router.patch('/updatepassword',auth(endpoint.update),validation(validtors.updatePassword),userController.updatePassword)
 router.get('/:id/shareprofile',auth(Object.values(roles)),validation(validtors.shareProfile),userController.shareProfile);
-router.post('/addAdmin',auth(endpoint.create),userController.addAdmin)
-router.post('/updateAdmin/:adminId',auth(endpoint.update),validation(validtors.updateAdmin),userController.updateAdmin)
-router.delete('/deleteAdmin/:adminId',auth(endpoint.delete),userController.deleteAdmin)
-router.get('/getallAdmin',auth(endpoint.getAllAdmin),userController.getAllAdmin)
-router.get('/getAdmin/:adminId',auth(endpoint.getAllAdmin),validation(validtors.getAdmin),userController.getAdmin)
-router.patch('/updateStatusAdmin/:adminId',auth(endpoint.update),validation(validtors.updateStatusAdmin),userController.updateStatusAdmin)
+
 
 
 
