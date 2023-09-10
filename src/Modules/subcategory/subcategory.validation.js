@@ -5,8 +5,9 @@ export const createSubCategory=joi.object({
     name:joi.string().min(2).max(20).required(),
     file:generalFeilds.file.required()
 }).required()
-export const updateCategory=joi.object({
+export const subCategoryUpdate=joi.object({
     categoryId:generalFeilds.id,
+    subcategoryId:generalFeilds.id,
     name:joi.string().min(2).max(20),
     file:generalFeilds.file
 }).required()
