@@ -12,4 +12,17 @@ router.post('/',auth(endpoint.create),fileUpload(fileValidation.image).fields([
     {name:'mainImages',maxCount:1},
     {name:'subImages',maxCount:5}
 ]),validation(validtors.createProduct),productController.createProduct)
+
+router.put('/update/:productId',auth(endpoint.update),fileUpload(fileValidation.image).fields([
+    {name:'mainImages',maxCount:1},
+    {name:'subImages',maxCount:5}
+]),validation(validtors.ProductUpdate),productController.updateProduct)
+router.patch('/softdelete/:productId',auth(endpoint.softdelete),productController.softDelete)
+router.delete('/forcedelete/:productId',auth(endpoint.forcedelete),productController.forceDelete)
+router.patch('/restore/:productId',auth(endpoint.restore),productController.restore)
+router.get('/softdelete',auth(endpoint.get),productController.getSoftDeleteProducts)
+router.get('/:productId',productController.getProduct)
+router.get('/',productController.getProducts)
+
+
 export default router

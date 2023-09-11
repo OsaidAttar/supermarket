@@ -10,8 +10,12 @@ export const createProduct=joi.object({
     categoryId:generalFeilds.id,
     subCategoryId:generalFeilds.id,
 }).required()
-export const updateCategory=joi.object({
-    categoryId:generalFeilds.id,
+export const ProductUpdate=joi.object({
+    productId:generalFeilds.id,
+    categoryId:generalFeilds.ids,
+    subCategoryId:generalFeilds.ids,
+    price:joi.string(),
+    stock:joi.string(),
     name:joi.string().min(2).max(20),
     file:generalFeilds.file
 }).required()

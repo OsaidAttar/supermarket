@@ -25,6 +25,7 @@ export const generalFeilds = {
         dest:joi.string(),
     }),
     id:joi.string().custom(validationObjectId).required(),
+    ids:joi.string().custom(validationObjectId)
 }
 const validation =(schema)=>{
     return (req,res,next)=>{
