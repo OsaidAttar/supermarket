@@ -101,7 +101,11 @@ export const updateProduct =asyncHandler(async(req,res,next)=>{
                 { folder: `${process.env.App_Name}/product/subImages` }
               );
               subImages.push({ secure_url, public_id });
+            // await cloudinary.api.delete_all_resources([product.subImages.public_id]) 
+                
+            
         }
+      
         product.subImages=subImages
         //destroy subimages
       }

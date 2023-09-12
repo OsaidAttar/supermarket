@@ -13,7 +13,7 @@ router.put('/update/:subcategoryId',auth(endpoint.update),fileUpload(fileValidat
 router.delete('/delete/:subcategoryId',auth(endpoint.delete),subcategoryController.deleteSubCategory)
 router.get('/all',subcategoryController.getSubcategories)
 router.get('/:subcategoryId',subcategoryController.getSubcategory)
-
+router.get('/:subcategoryId/products',subcategoryController.getProduct)
 //get product vitual populate
 
 

@@ -61,6 +61,14 @@ export const getSubcategory = asyncHandler(async (req, res, next) => {
        
     return res.status(201).json({message:"success",subcategory})
 })
+export const getProduct = asyncHandler(async (req, res, next) =>{
+    const {subcategoryId}=req.params
+    const products =await subCategoryModel.findById(subcategoryId).populate({
+        path:'products',
+        match:{deleted:{$eq:false}}
 
+    })
+    return res.status(201).json({message:"success",products})
+})
 
 
