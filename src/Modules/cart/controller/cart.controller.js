@@ -31,3 +31,22 @@ export const addProductToCart=(asyncHandler(async(req,res,next)=>{
 return res.status(200).json({message:"success"})
     }
 }))
+export const deleteItem=asyncHandler(async(req,res,next)=>{
+const {productIds}=req.body
+const deleteItem =await cartModel.updateOne({userId:req.user._id},{
+    $pull:{
+        products:{
+            productId:{$in:productIds}
+        }
+    }
+})
+return res.status(200).json({message:"success"})
+})
+export const clearCart =asyncHandler(async (req,res,next)=>{
+    const clearCart =await cartModel.updateOne({userId:req.user._id},{products:[]})
+    return res.status(200).json({message:"success"})
+})
+export const getCart =asyncHandler(async (req,res,next)=>{
+const cart =await cartModel.findOne({userId:req.user._id})
+return res.status(200).json({message:"success",cart})
+})
