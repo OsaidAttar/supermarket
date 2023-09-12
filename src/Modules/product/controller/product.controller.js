@@ -96,22 +96,23 @@ export const updateProduct =asyncHandler(async(req,res,next)=>{
       if(req.files.subImages.length){
         
         const subImages=[]
+       
         for(const file of product.subImages ){
+          
             await cloudinary.uploader.destroy(file.public_id) 
+          
         }
-        
         for(const file of req.files.subImages ){
             const { secure_url, public_id } = await cloudinary.uploader.upload(file.path,{ folder: `${process.env.App_Name}/product/subImages` });
               subImages.push({ secure_url, public_id });
-         
+              
         }
-       
+ 
         
       
         product.subImages=subImages
         //destroy subimages
       }
-      return res.json(product.subImages)
       product.updatedBy=req.user._id
       const newProduct= await product.save()
       if(!newProduct){
