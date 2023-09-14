@@ -19,3 +19,46 @@ req.body.updatedBy=req.user._id
 const coupon=await couponModel.create(req.body)
 return res.status(201).json({message:"success",coupon})
 })
+export const getCoupons =asyncHandler(async(req,res,next)=>{
+const coupon =await couponModel.find()
+return res.status(201).json({message:"success",coupon})
+})
+export const getCoupon =asyncHandler(async (req,res,next)=>{
+    const coupon =await couponModel.findById(req.params.couponId)
+
+if(!coupon){
+return next(new Error('Coupon not found',{cause:409}))
+}
+return res.status(201).json({message:"success",coupon})
+})
+export const updateCoupon =asyncHandler(async (req,res,next)=>{
+    const coupon =await couponModel.findById(req.params.couponId)
+    if(!coupon){
+        return next(new Error(`invalid coupon id ${req.params.couponId}`,{cause:404}))
+    }
+    if(req.body.name){
+        if(coupon.name==req.body.name){
+            return next(new Error(`old name match new name `,{cause:400}))
+        }
+        if(await couponModel.findOne({name:req.body.name})){
+            return next(new Error(`Dublicate coupon name `,{cause:409}))
+        }
+        coupon.name=req.body.name
+    }
+    if(req.body.amount){
+        coupon.amount=req.body.amount
+    }
+    req.body.updatedBy=req.user._id
+    await coupon.save()
+return res.status(200).json({message:"success",coupon})
+  
+    
+})
+export const deleteCoupon =asyncHandler(async (req,res,next)=>{
+    const {couponId}=req.params
+    const coupon =await couponModel.findByIdAndDelete(couponId)
+    if(!coupon){
+        return next(new Error('Coupon not found'),{cause:404})
+    }
+    return res.status(201).json({message:"success"})
+})
