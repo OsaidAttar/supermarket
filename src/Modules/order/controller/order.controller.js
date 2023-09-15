@@ -149,7 +149,7 @@ req.body.coupon=coupon
             subTotal+=product.finalPrice
             productIds.push(product.productId)
             finalProductList.push(product)
-            console.log(product.name);
+            
         
         }
       
@@ -203,3 +203,41 @@ await sendEmail(req.user.email,'infinity light-invoice','welcome',{
 })  
 return res.status(200).json({message:"success",order})
     })
+    export const cancelOrder =asyncHandler(async (req,res,next)=>{
+        const {orderId}=req.params
+        const {reasonReject}=req.body
+        const order =await orderModel.findById({_id:orderId,userId:req.user._id})
+       
+        if(!order ||order.status!='pending'  || order.paymentType!='cash'){
+            return next(new Error(`cant cancel this order`,{cause:400}))
+        }
+        await orderModel.updateOne({_id:order._id,},{status:'canceled',reasonReject,updatedBy:req.user._id})
+        for (const product of order.products){
+            await productModel.updateOne({_id:product.productId},{
+                $inc:{stock:product.qty}  
+            })
+        }
+        if(order.couponId){
+            await couponModel.updateOne({_id:order.couponId},{
+                $pull:{usedBy:req.user._id}
+            })
+        }
+        return res.status(200).json({message:"success"})
+    })
+    export const updateOrderStatusFromAdmin =asyncHandler(async (req,res,next)=>{
+        const {orderId}=req.params
+        const {status}=req.body
+        const order = await orderModel.findById(orderId)
+        if(!order ||order.status=='delivered'){
+            return next(new Error(` this order not found or  this order status is : ${order.status}`,{cause:400}))
+        }
+const changeOrderStatus = await orderModel.updateOne({_id:orderId},{status,updatedBy:req.user._id})
+if(!changeOrderStatus.matchedCount){
+    return next(new Error(` fail to change status this order`,{cause:400}))
+}
+return res.status(200).json({message:"success"})
+
+
+    })
+
+    
