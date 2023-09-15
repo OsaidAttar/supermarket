@@ -86,12 +86,11 @@ function generateInvoiceTable(doc, invoice) {
   for (i = 0; i < invoice.items.length; i++) {
     const item = invoice.items[i];
     const position = invoiceTableTop + (i + 1) * 30;
+   
     generateTableRow(
       doc,
       position,
       item.name,
-     
-    
       item.qty,
       formatCurrency(item.unitPrice*100),
       formatCurrency(item.finalPrice*100)

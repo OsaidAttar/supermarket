@@ -7,6 +7,8 @@ import cartModel from "../../../../DB/models/Cart.model.js";
 import createInvoice from "../../../Services/pdf.js";
 import { sendEmail } from "../../../Services/sendEmail.js";
 import userModel from "../../../../DB/models/User.model.js";
+import { response } from "express";
+
 
 
 
@@ -35,19 +37,23 @@ export const createOrder =asyncHandler(async (req,res,next)=>{
     for(const product of products){
         const checkProduct=await productModel.findOne({
             _id:product.productId,
-            stock:{$gte:product.qty}
+            stock:{$gte:product.qty},
+            deleted:false
         })
         if(!checkProduct){
             return next(new Error(`invalid product`,{cause:404}))
             
         }
+       
         product.name=checkProduct.name
         product.unitPrice=checkProduct.finalPrice
         product.finalPrice=product.qty*checkProduct.finalPrice
         subTotal+=product.finalPrice
         productIds.push(product.productId)
         finalProductList.push(product)
+    
     }
+   
     const order =await orderModel.create({
         userId:req.user._id,
         address,
@@ -74,7 +80,7 @@ $pull:{
         )
         const invoice = {
             shipping: {
-                name: req.user.userName,
+                name:req.user.userName,
                 address,
                 city: "Qalqilya",
                 
@@ -94,4 +100,106 @@ $pull:{
         })    
        
         return res.status(200).json({message:"success",order})
+    })
+    export const createOrderWithAllItemFromCart =asyncHandler(async (req,res,next)=>{
+        const cart =await cartModel.findOne({userId:req.user._id})
+      
+        if(!cart?.products?.length){
+            return next(new Error(` empty cart`,{cause:404}))
+        }
+
+        const {products,address,phoneNumber,couponName,paymentType}=req.body
+        req.body.products=cart.products
+        
+        if(couponName){
+            const coupon = await couponModel.findOne({name:couponName.toLowerCase()})
+if(!coupon){
+    return next(new Error(`invalid coupon ${couponName}`,{cause:404}))
+}
+let now =moment()
+let parsed=moment(coupon.expireDate,'DD/MM/YYYY')
+let diff =now.diff(parsed,'days')
+if(diff>=0){
+    return next(new Error(` coupon expired ${couponName}`,{cause:404}))
+}
+if(coupon.usedBy.includes(req.user._id)){
+    return next(new Error(` coupon already used by  ${req.user._id}`,{cause:404}))
+}
+req.body.coupon=coupon
+
+        }
+       
+        const finalProductList=[]
+        const productIds=[]
+        let subTotal=0
+        for(const product of products){
+            const checkProduct=await productModel.findOne({
+                _id:product.productId,
+                stock:{$gte:product.qty},
+                deleted:false
+            })
+            if(!checkProduct){
+                return next(new Error(`invalid product`,{cause:404}))
+                
+            }
+           
+            product.name=checkProduct.name
+            product.unitPrice=checkProduct.finalPrice
+            product.finalPrice=product.qty*checkProduct.finalPrice
+            subTotal+=product.finalPrice
+            productIds.push(product.productId)
+            finalProductList.push(product)
+            
+        
+        }
+      
+    
+const order=await orderModel.create({
+    userId:req.user._id,
+        address,
+        phoneNumber,
+        products:finalProductList,
+        subTotal,
+        couponId:req.body.coupon?._id,
+        paymentType,
+        finalPrice:subTotal-(subTotal*(req.body.coupon?.amount||0)/100),
+        status:(paymentType=='card')?'approved':'pending'
+})
+
+for (const product of products){
+    await productModel.updateOne({_id:product.productId},{$inc:{stock:-product.qty}})
+}
+
+if(req.body.coupon){
+    await couponModel.updateOne({_id:req.body.coupon._id},{$addToSet:{usedBy:req.user._id}})
+
+}
+await cartModel.updateOne({userId:req.user._id},{
+    products:[]
+
+})
+
+const invoice = {
+    shipping: {
+        name: req.user.userName,
+        address,
+        city: "Qalqilya",
+        
+    },
+    items:order.products,
+    subTotal:order.subTotal,
+    total:order.finalPrice,
+    invoice_nr: order._id
+   
+};
+
+
+createInvoice(invoice, "invoiceall.pdf");  
+ 
+await sendEmail(req.user.email,'infinity light-invoice','welcome',{
+   
+    path:'invoiceall.pdf',
+    contentType:'application/pdf'
+})  
+return res.status(200).json({message:"success",order})
     })

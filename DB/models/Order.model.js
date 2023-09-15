@@ -4,16 +4,16 @@ const orderSchema=new Schema({
     address:{type:String,required:true},
     phoneNumber:[{type:String,required:true}],
     products:[{
-       name:{type:String,required:true},
+       name:{type:String},
         productId:{type:Types.ObjectId,ref:'Product',required:true},
         qty:{type:Number,default:1,required:true},
-        unitPrice:{type:Number,required:true},
-        finalPrice:{type:Number,required:true},
+        unitPrice:{type:Number},
+        finalPrice:{type:Number},
     
     }],
    couponId:{type:Types.ObjectId,ref:'Coupon'},
-   subTotal:{type:Number,required:true},
-   finalPrice:{type:Number,required:true},
+   subTotal:{type:Number},
+   finalPrice:{type:Number},
    paymentType:{type:String,default:'cash',enum:['cash','card']},
    status:{type:String,default:'pending',enum:['pending','canceled','approved','onWay','delivered']}, // pending يتصلوا عليك عشان يشوفو كل اشي تمام موافق على الطلب الشركة
    reasonReject:String,
