@@ -80,7 +80,7 @@ $pull:{
         )
         const invoice = {
             shipping: {
-                name:req.user.userName,
+                name: req.user.userName,
                 address,
                 city: "Qalqilya",
                 
@@ -149,7 +149,7 @@ req.body.coupon=coupon
             subTotal+=product.finalPrice
             productIds.push(product.productId)
             finalProductList.push(product)
-            
+            console.log(product.name);
         
         }
       

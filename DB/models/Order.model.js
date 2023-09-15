@@ -11,6 +11,7 @@ const orderSchema=new Schema({
         finalPrice:{type:Number},
     
     }],
+    image:{type:Object},
    couponId:{type:Types.ObjectId,ref:'Coupon'},
    subTotal:{type:Number},
    finalPrice:{type:Number},
