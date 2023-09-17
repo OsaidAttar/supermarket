@@ -12,6 +12,7 @@ const validationObjectId=(value,helper)=>{
 export const generalFeilds = {
 
     email:joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
+   
     password:joi.string().min(3).required(),
     file:joi.object({
         fieldname:joi.string().required(),

@@ -69,7 +69,8 @@ export const createOrder =asyncHandler(async (req,res,next)=>{
         await productModel.updateOne({_id:product.productId},{$inc:{stock:-product.qty}})
     }
     if(req.body.coupon){
-        await couponModel.updateOne({ _id:req.body.coupon._id},{$addToSet:{usedBy:req.user._id}})}
+        await couponModel.updateOne({ _id:req.body.coupon._id},{$addToSet:{usedBy:req.user._id}})
+    }
         await cartModel.updateOne({userId:req.user._id},{
 $pull:{
     products:{

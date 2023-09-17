@@ -1,10 +1,10 @@
 import mongoose, {Schema,Types,model} from 'mongoose';
 const distributorsSchema = new Schema ({
     distributorsName:{
-        type:String,required:[true,`distributorsName is required`]},
-    email:{type:String,required:true},  
-  image:{type:Object,required:true },
-  phone:{type:String,},
+        type:String},
+    email:{type:String},  
+  image:{type:Object},
+  phoneNumber:{type:String,},
   role:{type:String,default:'distributors',enum:[`distributors`,`Admin`] },
   status:{type:String,default:'Active',enum:[`Active`,`Not_Active`]},
   gender:{ type:String, enum:[`Male`,`Female`]},
@@ -17,12 +17,16 @@ const distributorsSchema = new Schema ({
     finalPrice:{type:Number,required:true},
     
 }],
+subTotal:{type:Number},
+finalPrice:{type:Number},
 stock:{type:Number},
   priceOfAllProducts:{type:Number},
   stockManagementId:{type:Types.ObjectId,ref:'StockManagement'},
 },
 {
+ 
     timestamps:true
 })
+
 const distributorsModel = mongoose.models.Distributors ||  model('Distributors', distributorsSchema);
 export default distributorsModel;

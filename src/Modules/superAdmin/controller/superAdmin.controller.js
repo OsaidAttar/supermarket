@@ -1,3 +1,4 @@
+import employeeModel from "../../../../DB/models/Employees.model.js";
 import userModel from "../../../../DB/models/User.model.js";
 import cloudinary from "../../../Services/cloudinary.js";
 import { asyncHandler } from "../../../Services/errorHandling.js";
@@ -82,3 +83,20 @@ export const deleteAdmin=asyncHandler(async(req,res,next)=>{
                 await user.save()
                 return res.status(201).json({message:"success",user})
             })
+ export const addtaskToEmployee=asyncHandler(async(req,res,next)=>{
+const {employeeId}=req.params
+const task=req.body.task
+const employee =await employeeModel.findById(employeeId)
+if(!employee){
+    return next(new Error(`employee not found `,{cause:409}))  
+}
+const user =await userModel.findById({_id:req.user._id})
+if(!user){
+    return next(new Error(`user not found `,{cause:409}))  
+}
+if(employee.task==req.body.task){
+    return next(new Error(`the task is the same `,{cause:409}))
+}
+const Employee=await employeeModel.findByIdAndUpdate(employeeId,{task},{new:true})
+return res.status(201).json({message:"success",Employee})
+ })

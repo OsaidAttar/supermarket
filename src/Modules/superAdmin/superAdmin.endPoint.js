@@ -4,4 +4,5 @@ export const endpoint={
     update:[roles.SuperAdmin],
     delete:[roles.SuperAdmin],
     getAllAdmin:[roles.SuperAdmin],
+    addTask:[roles.SuperAdmin, roles.Admin],
 }

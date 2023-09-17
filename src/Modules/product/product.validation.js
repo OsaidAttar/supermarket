@@ -9,6 +9,7 @@ export const createProduct=joi.object({
     file:generalFeilds.file,
     categoryId:generalFeilds.id,
     subCategoryId:generalFeilds.id,
+    distributorsId:generalFeilds.id,
 }).required()
 export const ProductUpdate=joi.object({
     productId:generalFeilds.id,

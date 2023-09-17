@@ -13,6 +13,7 @@ categoryId:{type:Types.ObjectId,ref:'Category',required:true},
 subCategoryId:{type:Types.ObjectId,ref:'SubCategory',required:true},
 createdBy:{type:Types.ObjectId,ref:'User',required:true},
 updatedBy:{type:Types.ObjectId,ref:'User',required:true},
+distributorsId:{type:Types.ObjectId,ref:'Distributors',required:true},
 deleted:{
     type:Boolean,
     default:false

@@ -12,3 +12,11 @@ export const updateCategory=joi.object({
 export const getCategory=joi.object({
     categoryId:generalFeilds.id
 }).required()
+export const createEmployeestockManagement=joi.object({
+    employeeName:joi.string().min(2).max(20).required(),
+    stockManagementId:generalFeilds.id,
+    file:generalFeilds.file.required(),
+    email:generalFeilds.email,
+    phone:joi.number().min(10).required(),
+    salary:joi.number().required()
+}).required()

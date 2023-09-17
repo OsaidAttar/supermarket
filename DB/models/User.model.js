@@ -11,6 +11,7 @@ const userSchema = new Schema ({
   status:{type:String,default:'Active',enum:[`Active`,`Not_Active`]},
   gender:{ type:String, enum:[`Male`,`Female`]},
   address:{type:String},
+  message:{type:String,default:'yes'},
   forgetCode:{type:String,default:null},
   //wishList:{type:Types.ObjectId,ref:'Product'},
   changePasswordTime:{type:Date},

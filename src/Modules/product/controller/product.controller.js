@@ -4,12 +4,17 @@ import { asyncHandler } from "../../../Services/errorHandling.js";
 import cloudinary from "../../../Services/cloudinary.js";
 import productModel from "../../../../DB/models/Product.model.js";
 import { response } from "express";
+import distributorsModel from "../../../../DB/models/distributors.model.js";
 
 export const createProduct =asyncHandler(async(req,res,next)=>{
-    const { name, price, discount, categoryId, subCategoryId } = req.body;
+    const { name, price, discount, categoryId, subCategoryId,distributorsId } = req.body;
     const checkCategory=await subCategoryModel.find({_id:subCategoryId,categoryId})
     if (!checkCategory) {
         return next(new Error("invalid category or sub category"), { cause: 400 });
+    }
+    const distributors = await distributorsModel.findOne({ _id: distributorsId });
+    if (!distributors) {
+      return next(new Error("invalid distributors"), { cause: 400 });
     }
     req.body.sulg=slugify(name)
     req.body.finalPrice=price-price*((discount||0)/100)

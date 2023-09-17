@@ -22,11 +22,11 @@ const decoded =verifyToken(token,process.env.LOGIN_TOKEN)
 if(!decoded){
     return next(new Error('invalid token payload',{cause:400}))
 }
-const user=await userModel.findById(decoded.id).select('userName email role changePasswordTime')
+const user=await userModel.findById(decoded.id).select('userName email roles changePasswordTime')
 if(!user){
     return next(new Error('not register user',{cause:403}))
 }
-if(accessRole.includes(user.role)){
+if(!accessRole.includes(user.roles)){
     return next(new Error('not authrized user',{cause:401}))
 }
 if(parseInt(user.changePasswordTime?.getTime()/1000)>decoded.iat){
