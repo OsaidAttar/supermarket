@@ -1,4 +1,5 @@
 
+import { response } from "express";
 import userModel from "../../../../DB/models/User.model.js";
 import cloudinary from "../../../Services/cloudinary.js";
 import { asyncHandler } from "../../../Services/errorHandling.js";
@@ -19,11 +20,24 @@ export const updateUserProfile=asyncHandler(async(req,res,next)=>{
     const {userId}=req.params
     const {userName,email}=req.body
     const user =await userModel.findById(userId)
-   const{secure_url,public_id}=await cloudinary.uploader.upload(req.file.path,{folder:`${process.env.App_Name}/user`})
-  
-   await cloudinary.uploader.destroy(user.image.public_id)
- const newUser =await userModel.findByIdAndUpdate(userId,{userName,email,image:{secure_url,public_id}},{new:true})
+    if(req.body.userName){
+        user.userName=req.body.userName
+    }
+    if(req.file){
+        let{secure_url,public_id}=await cloudinary.uploader.upload(req.file.path,{folder:`${process.env.App_Name}/user`})
+        
+        await cloudinary.uploader.destroy(user.image.public_id)
+       
+        user.image.secure_url=secure_url
+        user.image.public_id=public_id
+   
+ }
+ 
+ const newUser =await userModel.findByIdAndUpdate(userId,{userName,email},{new:true})
  return res.status(201).json({message:"success",newUser})
+   
+   
+
 })
 export const deleteUserProfile=asyncHandler(async(req,res,next)=>{
 const {userId}=req.params
