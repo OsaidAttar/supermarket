@@ -1,11 +1,11 @@
 import mongoose, {Schema,Types,model} from 'mongoose';
 const distributorsSchema = new Schema ({
     distributorsName:{
-        type:String},
-    email:{type:String},  
+        type:String ,required:true},
+    email:{type:String ,required:true},  
   image:{type:Object},
-  phoneNumber:{type:String,},
-  role:{type:String,default:'distributors',enum:[`distributors`,`Admin`] },
+  phoneNumber:{type:String},
+  roles:{type:String,default:'distributors',enum:[`distributors`,`Admin`] },
   status:{type:String,default:'Active',enum:[`Active`,`Not_Active`]},
   gender:{ type:String, enum:[`Male`,`Female`]},
   address:{type:String},

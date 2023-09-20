@@ -2,8 +2,9 @@ import  Mongoose ,{Schema,Types,model} from "mongoose";
 const stockManagementSchema=new Schema({
 name:{type:String,required:true},
 slug:{type:String},
- supplierId:{type:Types.ObjectId,ref:'Supplier'},
-employeeId:{type:Types.ObjectId,ref:'Employee'},
+ supplierId:{type:Types.ObjectId,ref:'Supplier',required:true},
+employeeId:{type:Types.ObjectId,ref:'Employee',required:true},
+distributorsId:{type:Types.ObjectId,ref:'Distributors',required:true},
 
 products:[{
     name:{type:String,required:true},
