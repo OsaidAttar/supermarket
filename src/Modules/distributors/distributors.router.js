@@ -6,3 +6,9 @@ import fileUpload, { fileValidation } from '../../Services/multerCloudinary.js'
 const router=Router({mergeParams: true})
 router.post('/',auth(endpoint.create),fileUpload(fileValidation.image).single('image'),distributorController.createDistributors)
 export default router
+//update 
+//delete
+//get all
+// get
+// get product
+// update status active or not by time
