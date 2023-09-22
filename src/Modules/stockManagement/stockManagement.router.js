@@ -11,8 +11,12 @@ import *as validate from './stockManagement.validation.js'
 const router=Router({mergeParams: true})
 
 router.use('/:stockManagementId/suppliers',Suppliers)
-router.use('/:stockManagementId/distributors',distributors)
 router.post('/',auth(endpoint.create),fileUpload(fileValidation.image).single('image'),stockManagementController.createstockManagement)
 //router.post('/:stockManagementId/employee',auth(endpoint.create),fileUpload(fileValidation.image).single('image'),validation(validate.createEmployeestockManagement),stockManagementController.createEmployeestockManagement)
 
 export default router
+//validation
+//update
+//delete
+//get
+//getall

@@ -3,7 +3,7 @@ const employeeSchema = new Schema ({
     employeeName:{
         type:String,required:[true,`employeeName is required`]},
         slug:{type:String,required:true},
-    email:{type:String,required:true},  
+    email:{type:String},  
   image:{type:Object},
   phone:{type:String,},
   userId:{type:Types.ObjectId,ref:'User'},

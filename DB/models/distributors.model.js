@@ -2,7 +2,7 @@ import mongoose, {Schema,Types,model} from 'mongoose';
 const distributorsSchema = new Schema ({
     distributorsName:{
         type:String ,required:true},
-    email:{type:String ,required:true},  
+    email:{type:String },  
   image:{type:Object},
   phoneNumber:{type:String},
   roles:{type:String,default:'distributors',enum:[`distributors`,`Admin`] },
@@ -12,15 +12,14 @@ const distributorsSchema = new Schema ({
   products:[{
     name:{type:String,required:true},
     productId:{type:Types.ObjectId,ref:'Product',required:true},
-    qty:{type:Number,default:1,required:true},
+    qty:{type:Number,required:true},
     unitPrice:{type:Number,required:true},
     finalPrice:{type:Number,required:true},
     
 }],
+time:{type:String,default:'00,00,00'},
 subTotal:{type:Number},
 finalPrice:{type:Number},
-stock:{type:Number},
-  priceOfAllProducts:{type:Number},
   stockManagementId:{type:Types.ObjectId,ref:'StockManagement'},
 },
 {

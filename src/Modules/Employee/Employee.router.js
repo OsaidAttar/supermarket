@@ -12,7 +12,7 @@ router.get('/all',EmployeeController.getEmployees)
 router.get('/:employeeId',EmployeeController.getEmployee)
 router.delete('/delete/:employeeId',auth(endpoint.delete),EmployeeController.deleteEmployee)
 router.put('/changeStatus/:employeeId',auth(endpoint.update),EmployeeController.changeStatus)
-router.post('/addproduct/:productId',auth(endpoint.addProduct),EmployeeController.addProduct)
+router.post('/addproduct',auth(endpoint.addProduct),EmployeeController.addProduct)
 router.post('/addproducttostock/:productId',auth(endpoint.addProduct),EmployeeController.addproducttostock)
 router.patch('/updatevacation/:employeeId',auth(endpoint.update),EmployeeController.updateVacationEmployee)
 

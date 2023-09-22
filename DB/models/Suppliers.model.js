@@ -5,7 +5,7 @@ const supplierSchema = new Schema ({
     email:{type:String},  
   image:{type:Object },
   phone:{type:String,},
-  role:{type:String,default:'supplier',enum:[`supplier`,`Admin`] },
+  roles:{type:String,default:'supplier',enum:[`supplier`,`Admin`] },
   status:{type:String,default:'Active',enum:[`Active`,`Not_Active`]},
   gender:{ type:String, enum:[`Male`,`Female`]},
   address:{type:String},
@@ -18,7 +18,9 @@ const supplierSchema = new Schema ({
     finalPrice:{type:Number,required:true},
     
 }],
-  priceOfAllProducts:{type:Number},
+finalPrice:{type:Number},
+subTotal:{type:Number},
+  //priceOfAllProducts:{type:Number},
 
 },
 {

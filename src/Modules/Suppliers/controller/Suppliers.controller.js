@@ -9,8 +9,11 @@ export const createSuppliers =(asyncHandler(async(req,res,next)=>{
     if(await supplierModel.findOne({supplierName})){
         return next(new Error(`Dublicate supplier name `,{cause:409}))
     }
+    if(req.file){
+        const{secure_url,public_id}=await cloudinary.uploader.upload(req.file.path,{folder:`${process.env.App_Name}/supplier`})
+
+    }
    
-    const{secure_url,public_id}=await cloudinary.uploader.upload(req.file.path,{folder:`${process.env.App_Name}/supplier`})
     const supplier =await supplierModel.create({supplierName,email,phone,slug:slugify(supplierName),image:{secure_url,public_id},createdBy:req.user._id,updatedBy:req.user._id,stockManagementId})
     return res.status(201).json({message:"success",supplier})
 }))

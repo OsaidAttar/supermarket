@@ -119,24 +119,24 @@ export const changeStatus =asyncHandler(async(req,res,next)=>{
     }
     )
 export const addProduct =asyncHandler(async(req,res,next)=>{
-const {products,couponName,address,phoneNumber,distributorsName}=req.body
-if(couponName){
-    const coupon =await couponModel.findOne({name:couponName.toLowerCase()})
-    if(!coupon){
-        return next(new Error(`invalid coupon ${couponName}`,{cause:404}))
+    const {products,couponName,address,phoneNumber,distributorsName}=req.body
+    if(couponName){
+        const coupon =await couponModel.findOne({name:couponName.toLowerCase()})
+        if(!coupon){
+            return next(new Error(`invalid coupon ${couponName}`,{cause:404}))
+        }
+        let now =moment()
+        let parsed=moment(coupon.expireDate,'DD/MM/YYYY')
+        let diff=now.diff(parsed,'days')
+        if(diff >=0){
+            return next(new Error(` coupon expired ${couponName}`,{cause:404}))
+        }
+        if(coupon.usedBy.includes(req.user._id)){
+            return next(new Error(` coupon already used by  ${req.user._id}`,{cause:404}))
+        }
+        req.body.coupon=coupon
     }
-    let now =moment()
-    let parsed=moment(coupon.expireDate,'DD/MM/YYYY')
-    let diff=now.diff(parsed,'days')
-    if(diff >=0){
-        return next(new Error(` coupon expired ${couponName}`,{cause:404}))
-    }
-    if(coupon.usedBy.includes(req.user._id)){
-        return next(new Error(` coupon already used by  ${req.user._id}`,{cause:404}))
-    }
-    req.body.coupon=coupon
-}
-const finalProductList=[]
+    const finalProductList=[]
     const productIds=[]
     let subTotal=0
     for (const product of products){
@@ -165,8 +165,9 @@ const finalProductList=[]
         subTotal,
         couponId:req.body.coupon?._id,
         finalPrice:subTotal- (subTotal*(req.body.coupon?.amount||0)/100),
-       })
-       for(const product of products){
+    })
+    
+    for(const product of products){
         await productModel.updateOne({_id:product.productId},{$inc:{stock:-product.qty}})
        }
        if(req.body.coupon){

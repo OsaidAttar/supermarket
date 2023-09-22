@@ -7,3 +7,10 @@ import { endpoint } from './Suppliers.endPoint.js'
 const router=Router({mergeParams: true})
 router.post('/',auth(endpoint.create),fileUpload(fileValidation.image).single('image'),SuppliersController.createSuppliers)
 export default router
+//validatoin
+//update
+//delete
+//get 
+// get all
+//update status by time
+//update to create
