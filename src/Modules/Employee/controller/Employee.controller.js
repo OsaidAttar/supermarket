@@ -247,7 +247,9 @@ const {products,couponName,address,phoneNumber,name,employeeId,supplierId,distri
             productIds.push(product.productId)
             finalProductList.push(product)
         }
-       
+       if(!suppliersId){
+        return next(new Error('suppliers not found'),{cause:400})
+       }
          supplier= await supplierModel.findByIdAndUpdate(suppliersId,{
             $pull:{
                 products:{
