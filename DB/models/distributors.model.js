@@ -10,11 +10,11 @@ const distributorsSchema = new Schema ({
   gender:{ type:String, enum:[`Male`,`Female`]},
   address:{type:String},
   products:[{
-    name:{type:String,required:true},
+    name:{type:String},
     productId:{type:Types.ObjectId,ref:'Product',required:true},
     qty:{type:Number,required:true},
-    unitPrice:{type:Number,required:true},
-    finalPrice:{type:Number,required:true},
+    unitPrice:{type:Number},
+    finalPrice:{type:Number},
     
 }],
 time:{type:String,default:'00,00,00'},

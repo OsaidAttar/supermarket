@@ -11,15 +11,16 @@ const supplierSchema = new Schema ({
   address:{type:String},
   stock:{type:Number},
   products:[{
-    name:{type:String,required:true},
+    name:{type:String},
     productId:{type:Types.ObjectId,ref:'Product',required:true},
-    qty:{type:Number,default:1,required:true},
-    unitPrice:{type:Number,required:true},
-    finalPrice:{type:Number,required:true},
+    qty:{type:Number,required:true},
+    unitPrice:{type:Number},
+    finalPrice:{type:Number},
     
 }],
 finalPrice:{type:Number},
 subTotal:{type:Number},
+time:{type:String,default:'00,00,00'}
   //priceOfAllProducts:{type:Number},
 
 },

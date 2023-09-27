@@ -1,13 +1,22 @@
 import joi from 'joi'
 import {generalFeilds} from '../../MiddelWare/validation.js'
-export const createCategory=joi.object({
+export const createstockManagement=joi.object({
     name:joi.string().min(2).max(20).required(),
-    file:generalFeilds.file.required()
-}).required()
-export const updateCategory=joi.object({
     categoryId:generalFeilds.id,
+    subCategoryId:generalFeilds.id,
+    supplierId:joi.array().required(),
+    employeeId:joi.array().required(),
+    distributorsId:generalFeilds.id,
+
+}).required()
+export const updatestockManagemen=joi.object({
     name:joi.string().min(2).max(20),
-    file:generalFeilds.file
+    categoryId:generalFeilds.ids,
+    subCategoryId:generalFeilds.ids,
+    supplierId:joi.array(),
+    employeeId:joi.array(),
+    distributorsId:generalFeilds.ids,
+    stockmanagementId:generalFeilds.id
 }).required()
 export const getCategory=joi.object({
     categoryId:generalFeilds.id

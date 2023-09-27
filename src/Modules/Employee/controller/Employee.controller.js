@@ -13,6 +13,7 @@ import createInvoice from "../../../Services/pdf.js";
 import { sendEmail } from "../../../Services/sendEmail.js";
 import stockManagementModel from "../../../../DB/models/stockManagement.model.js";
 import userModel from "../../../../DB/models/User.model.js";
+import supplierModel from "../../../../DB/models/Suppliers.model.js";
 export const createEmployee =(asyncHandler(async(req,res,next)=>{
     
     const {employeeName,email ,phone,salary,slug,status}=req.body
@@ -206,24 +207,26 @@ export const addProduct =asyncHandler(async(req,res,next)=>{
  })
 
  export const addproducttostock =asyncHandler(async(req,res,next)=>{
-
-const {products,couponName,address,phoneNumber,name,employeeId,supplierId}=req.body
-    if(couponName){
-        const coupon =await couponModel.findOne({name:couponName.toLowerCase()})
-        if(!coupon){
-            return next(new Error(`invalid coupon ${couponName}`,{cause:404}))
-        }
-        let now =moment()
-        let parsed=moment(coupon.expireDate,'DD/MM/YYYY')
-        let diff=now.diff(parsed,'days')
-        if(diff >=0){
-            return next(new Error(` coupon expired ${couponName}`,{cause:404}))
-        }
-        if(coupon.usedBy.includes(req.user._id)){
-            return next(new Error(` coupon already used by  ${req.user._id}`,{cause:404}))
-        }
-        req.body.coupon=coupon
-    }
+   const {stockManagementId,suppliersId}=req.params
+   const StockManagement=await stockManagementModel.findById(stockManagementId)
+let supplier=await supplierModel.findById(suppliersId)
+const {products,couponName,address,phoneNumber,name,employeeId,supplierId,distributorsId}=req.body
+    // if(couponName){
+    //     const coupon =await couponModel.findOne({name:couponName.toLowerCase()})
+    //     if(!coupon){
+    //         return next(new Error(`invalid coupon ${couponName}`,{cause:404}))
+    //     }
+    //     let now =moment()
+    //     let parsed=moment(coupon.expireDate,'DD/MM/YYYY')
+    //     let diff=now.diff(parsed,'days')
+    //     if(diff >=0){
+    //         return next(new Error(` coupon expired ${couponName}`,{cause:404}))
+    //     }
+    //     if(coupon.usedBy.includes(req.user._id)){
+    //         return next(new Error(` coupon already used by  ${req.user._id}`,{cause:404}))
+    //     }
+    //     req.body.coupon=coupon
+    // }
     const finalProductList=[]
         const productIds=[]
         let subTotal=0
@@ -244,17 +247,19 @@ const {products,couponName,address,phoneNumber,name,employeeId,supplierId}=req.b
             productIds.push(product.productId)
             finalProductList.push(product)
         }
-        const stockManagement =await stockManagementModel.create({
-            employeeId,
-            supplierId,
-            name,
-            userId:req.user._id ,
-            address,
-            phoneNumber,
+       
+         supplier= await supplierModel.findByIdAndUpdate(suppliersId,{
+            $pull:{
+                products:{
+                    productId:{$in:productIds}
+                }
+            }
+         } )
+                    
+        const stockManagement =await stockManagementModel.findByIdAndUpdate(stockManagementId,{
+            
             products:finalProductList,
-            subTotal,
-            couponId:req.body.coupon?._id,
-            finalPrice:subTotal- (subTotal*(req.body.coupon?.amount||0)/100),
+            
            })
            for(const product of products){
             await productModel.updateOne({_id:product.productId},{$inc:{stock:-product.qty}})
@@ -262,13 +267,8 @@ const {products,couponName,address,phoneNumber,name,employeeId,supplierId}=req.b
            if(req.body.coupon){
             await couponModel.updateOne({_id:req.body.coupon._id},{$addToSet:{usedBy:req.user._id}})
            }
-           await cartModel.updateOne({userId:req.user._id},{
-            $pull:{
-                products:{
-                    productId:{$in:productIds}
-                }
-            }
-                    })
+          
+         
                     const invoice = {
                         shipping: {
                             name: req.user.userName,
@@ -312,4 +312,151 @@ export const updateVacationEmployee =asyncHandler(async(req,res,next)=>{
 })
      
     
+export const addProductFromStockToDistributor = asyncHandler(async (req, res, next) => {
+    const { distributorsId, stockManagementId } = req.params;
+    const { products, couponName, address, phoneNumber, name, employeeId, supplierId } = req.body; // [{ id:01 , q:2}]
+    if (couponName) {
+        const coupon = await couponModel.findOne({ name: couponName.toLowerCase() })
+        if (!coupon) {
+            return next(new Error(`invalid coupon ${couponName}`, { cause: 404 }))
+        }
+        let now = moment()
+        let parsed = moment(coupon.expireDate, 'DD/MM/YYYY')
+        let diff = now.diff(parsed, 'days')
+        if (diff >= 0) {
+            return next(new Error(` coupon expired ${couponName}`, { cause: 404 }))
+        }
+        if (coupon.usedBy.includes(req.user._id)) {
+            return next(new Error(` coupon already used by  ${req.user._id}`, { cause: 404 }))
+        }
+        req.body.coupon = coupon
+    }
+
+let stockManagement = await stockManagementModel.findById(stockManagementId);
+if(!stockManagement){
+    return next(new Error(`stock not found`,{cause:404}))
+}
+let distributors = await distributorsModel.findById(distributorsId);
+
+if(!distributors){
+     distributors=await distributorsModel.findByIdAndUpdate(distributorsId,{products},{new :true})
+    return next(new Error(`distributor not found`,{cause:404}))
+}
+    for (let product of products) {
+     
+      await distributorsModel.updateOne(
+            { _id: distributorsId, 'products.productId': product.productId },
+            { $inc: { 'products.$.qty': product.qty } }
+        );
+        
+        let matchProduct=false
+        for(let i=0;i<distributors.products.length;i++){
+            if(distributors.products[i].productId.toString()==product.productId){
+
+                const checkProduct=await productModel.findOne({
+                    _id:product.productId,
+                    stock:{$gte:product.qty},
+                    deleted:false
+                })
+    if(!checkProduct){
+        return next(new Error(`invalid product`,{cause:404}))
+        
+    }
+    let qty= distributors.products[i].qty
+    let finalPrice =distributors.products[i].finalPrice
+    finalPrice=qty*checkProduct.finalPrice
+    
+    
+    matchProduct=true
+    
+    let subTotal=0
+    for (let product of distributors.products){
+        
+        product.finalPrice=finalPrice
+        
+        
+        
+        distributors.subTotal=subTotal+product.finalPrice
+        distributors.finalPrice=distributors.subTotal-(distributors.subTotal*(req.body.coupon?.amount||0)/100)
+        await distributors.save()
+        
+    }
+    }}
+    }
+    
+
+     for (let Product of products) {
+      
+     await stockManagementModel.updateOne({ _id: stockManagementId,'products.productId': Product.productId },
+         { $inc: { 'products.$.qty': -Product.qty }  });
+          
+         
+         
+         
+         let matchProduct=false
+         for(let i=0;i<stockManagement.products.length;i++){
+       
+             if(stockManagement.products[i].productId.toString()==Product.productId){
+        
+        const checkProduct=await productModel.findOne({
+            _id:Product.productId,
+            stock:{$gte:Product.qty},
+            deleted:false
+    })
+    if(!checkProduct){
+        return next(new Error(`invalid product`,{cause:404}))
+        
+    }
+    let qty= stockManagement.products[i].qty
+  
+   if(qty < 0){
+       return next(new Error(`can't add product because the qty is empty`,{cause:404}))
+    }
+   let finalPrice =stockManagement.products[i].finalPrice
+  finalPrice=qty*checkProduct.finalPrice
+  
+  
+  matchProduct=true
+  
+  let subTotal=0
+  for (let product of stockManagement.products){
+      
+      product.finalPrice=finalPrice
+      
+      
+      
+      stockManagement.subTotal=subTotal+product.finalPrice
+      stockManagement.finalPrice=stockManagement.subTotal-(stockManagement.subTotal*(req.body.coupon?.amount||0)/100)
+      await stockManagement.save()
+   
+      
+    }
+}
+}
+}
+
+
  
+    const updatedDistributors = await distributorsModel.findById(distributorsId);
+    
+    return res.status(200).json({ message: "Success"});
+    
+
+});
+// for (const product of products){
+//     const checkProduct=await productModel.findOne({
+//         _id:product.productId,
+//         stock:{$gte:product.qty},
+//         deleted:false
+//     })
+//     if(!checkProduct){
+//         return next(new Error(`invalid product`,{cause:404}))
+        
+//     }
+//     product.name=checkProduct.name
+//     product.unitPrice=checkProduct.finalPrice
+//     product.finalPrice=product.qty*checkProduct.finalPrice
+//     subTotal+=product.finalPrice
+//     productIds.push(product.productId)
+//     finalProductList.push(product)
+// }

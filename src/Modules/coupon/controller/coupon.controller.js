@@ -4,7 +4,7 @@ import { asyncHandler } from "../../../Services/errorHandling.js";
 export const createCoupon =asyncHandler(async(req,res,next)=>{
     const {name}=req.body
     let date = new Date(req.body.expireDate)
-console.log(date);
+
 let now =new Date()
 if(now.getTime()>=date.getTime()){
     return next(new Error(`invalid date `,{cause:400}))

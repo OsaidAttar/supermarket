@@ -3,20 +3,21 @@ import { auth } from '../../MiddelWare/auth.middelware.js'
 import * as stockManagementController from'./controller/stockManagement.controller.js'
 import fileUpload, { fileValidation } from '../../Services/multerCloudinary.js'
 import { endpoint } from './stockManagement.endPoint.js'
-import Suppliers from '../Suppliers/Suppliers.router.js'
-import employee from '../Employee/Employee.router.js'
-import distributors from '../distributors/distributors.router.js'
+
 import validation from '../../MiddelWare/validation.js'
 import *as validate from './stockManagement.validation.js'
-const router=Router({mergeParams: true})
+const router=Router()
 
-router.use('/:stockManagementId/suppliers',Suppliers)
-router.post('/',auth(endpoint.create),fileUpload(fileValidation.image).single('image'),stockManagementController.createstockManagement)
-//router.post('/:stockManagementId/employee',auth(endpoint.create),fileUpload(fileValidation.image).single('image'),validation(validate.createEmployeestockManagement),stockManagementController.createEmployeestockManagement)
+
+router.post('/',auth(endpoint.create),validation(validate.createstockManagement),stockManagementController.createstockManagement)
+router.put('/update/:stockmanagementId',auth(endpoint.update),validation(validate.updatestockManagemen),stockManagementController.updatestockManagement)
+router.delete('/delete/:stockmanagementId',auth(endpoint.delete),stockManagementController.deletestockManagement)
+router.get('/all',stockManagementController.getStockManagements)
+router.get('/:stockmanagementId',stockManagementController.getStockManagement)
+
 
 export default router
-//validation
-//update
-//delete
-//get
-//getall
+
+
+
+
