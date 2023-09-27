@@ -12,5 +12,6 @@ export const updateSupplier=joi.object({
     supplierName:joi.string().min(2).max(20),
     file:generalFeilds.file,
     email:generalFeilds.email,
-    phone:joi.number()
+    phone:joi.number(),
+    products:joi.array()
 }).required()
