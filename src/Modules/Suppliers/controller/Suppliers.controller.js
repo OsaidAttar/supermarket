@@ -190,7 +190,7 @@ for (const product of products){
 
 }
 
-
+supplier.products=products
 await supplier.save()
 return res.status(200).json({message:"Success",supplier})
 
