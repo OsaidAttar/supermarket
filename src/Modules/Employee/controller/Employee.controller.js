@@ -246,24 +246,24 @@ const {products,couponName,address,phoneNumber,name,employeeId,supplierId,distri
             subTotal+=product.finalPrice
             productIds.push(product.productId)
             finalProductList.push(product)
-        }
-       if(!suppliersId){
-        return next(new Error('suppliers not found'),{cause:400})
-       }
-         supplier= await supplierModel.findByIdAndUpdate(suppliersId,{
-            $pull:{
-                products:{
-                    productId:{$in:productIds}
-                }
+            if(!suppliersId){
+                return next(new Error('suppliers not found'),{cause:400})
             }
-         } )
-                    
-        const stockManagement =await stockManagementModel.findByIdAndUpdate(stockManagementId,{
-            
-            products:finalProductList,
-            
-           })
-           for(const product of products){
+            supplier= await supplierModel.findByIdAndUpdate(suppliersId,{
+                $pull:{
+                    products:{
+                        productId:{$in:productIds}
+                    }
+                }
+            } )
+          
+            const stockManagement =await stockManagementModel.findByIdAndUpdate(stockManagementId,{
+                
+                products:finalProductList,
+                
+            })
+        }
+            for(const product of products){
             await productModel.updateOne({_id:product.productId},{$inc:{stock:-product.qty}})
            }
            if(req.body.coupon){
