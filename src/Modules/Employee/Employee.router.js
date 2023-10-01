@@ -16,7 +16,7 @@ router.post('/addproduct',auth(endpoint.addProduct),EmployeeController.addProduc
 router.post('/addproducttostock/:stockManagementId/supplier/:suppliersId',auth(endpoint.addProduct),EmployeeController.addproducttostock)
 router.patch('/updatevacation/:employeeId',auth(endpoint.update),EmployeeController.updateVacationEmployee)
 router.post('/addProductFromStock/:stockManagementId/distributor/:distributorsId',auth(endpoint.addProduct),EmployeeController.addProductFromStockToDistributor)
-
+router.patch('/confirmjob',EmployeeController.confirmjob)
 
 export default router
 

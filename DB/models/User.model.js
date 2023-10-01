@@ -15,6 +15,8 @@ const userSchema = new Schema ({
   forgetCode:{type:String,default:null},
   //wishList:{type:Types.ObjectId,ref:'Product'},
   changePasswordTime:{type:Date},
+  confirmJob:{type:Boolean,default:false},
+  okJob:{type:Boolean,default:false},
 },
 {
     timestamps:true

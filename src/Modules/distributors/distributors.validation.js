@@ -21,3 +21,6 @@ export const updateDistributors=joi.object({
 export const getCategory=joi.object({
     categoryId:generalFeilds.id
 }).required()
+export const token=joi.object({
+    token:joi.string().required()
+}).required()

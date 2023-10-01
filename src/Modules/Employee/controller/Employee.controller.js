@@ -14,6 +14,7 @@ import { sendEmail } from "../../../Services/sendEmail.js";
 import stockManagementModel from "../../../../DB/models/stockManagement.model.js";
 import userModel from "../../../../DB/models/User.model.js";
 import supplierModel from "../../../../DB/models/Suppliers.model.js";
+import { generateToken, verifyToken } from "../../../Services/generateAndVerifyToken.js";
 export const createEmployee =(asyncHandler(async(req,res,next)=>{
     
     const {employeeName,email ,phone,salary,slug,status}=req.body
@@ -74,12 +75,12 @@ await employee.save()
 return res.status(201).json({message:"success",employee})
 })
 export const getEmployees =asyncHandler(async(req,res,next)=>{
-    const employee = await employeeModel.find()
+    const employee = await employeeModel.find().select('employeeName phone')
     return res.status(200).json({message:"success",employee})
 })
 export const getEmployee =asyncHandler(async(req,res,next)=>{
     const{employeeId}=req.params
-    const employee = await employeeModel.findById(employeeId)
+    const employee = await employeeModel.findById(employeeId).select('employeeName phone')
     if(!employee){
         return next(new Error(`employee not found `,{cause:400}))
     }
@@ -445,20 +446,34 @@ if(!distributors){
     
 
 });
-// for (const product of products){
-//     const checkProduct=await productModel.findOne({
-//         _id:product.productId,
-//         stock:{$gte:product.qty},
-//         deleted:false
-//     })
-//     if(!checkProduct){
-//         return next(new Error(`invalid product`,{cause:404}))
-        
-//     }
-//     product.name=checkProduct.name
-//     product.unitPrice=checkProduct.finalPrice
-//     product.finalPrice=product.qty*checkProduct.finalPrice
-//     subTotal+=product.finalPrice
-//     productIds.push(product.productId)
-//     finalProductList.push(product)
-// }
+export const confirmjob =asyncHandler(async(req,res,next)=>{
+    const{email}=req.body
+    const token =generateToken({email},process.env.SIGNUP_TOKEN,60*5)
+ //const link=`${req.protocol}://${req.headers.host}/auth/confirmEmail/${token}`
+
+const decoded=verifyToken(token,process.env.SIGNUP_TOKEN)
+if(!decoded?.email){
+    return next(new Error('Invalid token payload',{cause:400}))
+
+}
+let user=await userModel.findOne({email:decoded.email})
+if(!user){
+    return next(new Error("user not found",{cause:400}))
+}
+if(user.okJob){
+    let job=user.confirmJob
+    job=true
+    user.confirmJob=job
+    user=await userModel.findOneAndUpdate({email:decoded.email},{confirmJob:true})
+    if(user.confirmJob){
+        user=await userModel.findOneAndUpdate({email:decoded.email},{roles:"Employee"})
+        return res.status(200).json({message:'success'})
+    }
+    
+}
+    return next(new Error("Wait until the admin approves your request",{cause:400}))
+
+
+
+
+})

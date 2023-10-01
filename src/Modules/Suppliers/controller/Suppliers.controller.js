@@ -75,12 +75,12 @@ await suppliers.save()
 return res.status(201).json({message:"success",suppliers})
 })
 export const getSuppliers =asyncHandler(async(req,res,next)=>{
-    const suppliers = await supplierModel.find()
+    const suppliers = await supplierModel.find().select('supplierName phone')
     return res.status(200).json({message:"success",suppliers})
 })
 export const getSupplier =asyncHandler(async(req,res,next)=>{
     const{suppliersId}=req.params
-    const suppliers= await supplierModel.findById(suppliersId)
+    const suppliers= await supplierModel.findById(suppliersId).select('supplierName phone')
     if(!suppliers){
         return next(new Error(`suppliers not found `,{cause:400}))
     }
