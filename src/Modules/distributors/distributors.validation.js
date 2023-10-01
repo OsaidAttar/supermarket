@@ -18,8 +18,8 @@ export const updateDistributors=joi.object({
     stockManagementId:generalFeilds.ids,
     distributorsId:generalFeilds.id
 }).required()
-export const getCategory=joi.object({
-    categoryId:generalFeilds.id
+export const confirmJob=joi.object({
+    email:generalFeilds.email
 }).required()
 export const token=joi.object({
     token:joi.string().required()

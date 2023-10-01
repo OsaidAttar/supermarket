@@ -10,7 +10,7 @@ router.post('/',auth(endpoint.create),fileUpload(fileValidation.image).single('i
 router.put('/update/:distributorsId',auth(endpoint.update),fileUpload(fileValidation.image).single('image'),validation(validate.updateDistributors),distributorController.updateDistributors)
 router.delete('/delete/:distributorsId',auth(endpoint.delete),distributorController.deleteDistributors)
 router.get('/all',distributorController.getAllDistributors)
-router.patch('/confirmjob',distributorController.confirmjob)
+router.patch('/confirmjob',validation(validate.confirmJob),distributorController.confirmjob)
 router.get('/:distributorsId',distributorController.getDistributor)
 router.patch('/updatestatus/:distributorsId',auth(endpoint.update),distributorController.updateStatusDistributor)
 

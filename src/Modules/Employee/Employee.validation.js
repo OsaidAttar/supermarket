@@ -18,6 +18,9 @@ export const updateEmployee=joi.object({
     email:generalFeilds.email,
 
 }).required()
+export const confirmJob=joi.object({
+    email:generalFeilds.email
+}).required()
 export const getCategory=joi.object({
     categoryId:generalFeilds.id
 }).required()
